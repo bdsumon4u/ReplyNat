@@ -1,0 +1,24 @@
+{
+	"name": "hotash/n8n",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"Hotash\\N8n\\": "src/",
+			"Hotash\\N8n\\Tests\\": "tests/",
+			"Hotash\\N8n\\Database\\Factories\\": "database/factories/",
+			"Hotash\\N8n\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Hotash\\N8n\\Providers\\N8nServiceProvider"
+			]
+		}
+	}
+}
