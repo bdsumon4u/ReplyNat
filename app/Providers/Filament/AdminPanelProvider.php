@@ -2,6 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
+use Filament\FontProviders\GoogleFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,15 +31,30 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->passwordReset()
+            ->emailVerification()
+            ->profile(isSimple: false)
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            ->font('Roboto', provider: GoogleFontProvider::class)
+            ->brandLogo(fn (): string => asset('imgs/logo.png'))
+            ->darkModeBrandLogo(fn (): string => asset('imgs/logo.png'))
+            ->brandLogoHeight('2.5rem')
+            ->favicon(fn (): string => asset('imgs/icon.png'))
+            ->globalSearch()
+            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
+            ->sidebarWidth('16rem')
+            ->sidebarCollapsibleOnDesktop()
+            ->databaseNotifications()
+            ->databaseNotificationsPolling(null)
+            ->databaseTransactions()
+            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
+            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
@@ -52,8 +70,18 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->authGuard('admin')
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->multiFactorAuthentication([
+                AppAuthentication::make()
+                    ->recoverable(),
+                EmailAuthentication::make(),
+            ], isRequired: false)
+            ->strictAuthorization()
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->unsavedChangesAlerts()
+            ->spa(hasPrefetching: true);
     }
 }

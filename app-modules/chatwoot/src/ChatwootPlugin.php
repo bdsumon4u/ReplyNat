@@ -21,15 +21,15 @@ class ChatwootPlugin implements Plugin
     {
         $panel
             ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
+                in: __DIR__.'/Filament/Resources',
                 for: 'Modules\\Chatwoot\\Filament\\Resources',
             )
             ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
+                in: __DIR__.'/Filament/Pages',
                 for: 'Modules\\Chatwoot\\Filament\\Pages',
             )
             ->discoverWidgets(
-                in: __DIR__ . '/Filament/Widgets',
+                in: __DIR__.'/Filament/Widgets',
                 for: 'Modules\\Chatwoot\\Filament\\Widgets',
             );
     }
