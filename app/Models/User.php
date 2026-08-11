@@ -9,6 +9,7 @@ use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,7 +21,7 @@ use Illuminate\Notifications\Notifiable;
  * @property array<string>|null $app_authentication_recovery_codes
  * @property bool $has_email_authentication
  */
-final class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasEmailAuthentication, MustVerifyEmail
+final class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasEmailAuthentication, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -34,6 +35,10 @@ final class User extends Authenticatable implements FilamentUser, HasAppAuthenti
         'name',
         'email',
         'password',
+        'provider',
+        'provider_id',
+        'avatar_url',
+        'email_verified_at',
     ];
 
     /**
@@ -47,6 +52,11 @@ final class User extends Authenticatable implements FilamentUser, HasAppAuthenti
         'app_authentication_secret',
         'app_authentication_recovery_codes',
     ];
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar_url;
+    }
 
     public function getAppAuthenticationSecret(): ?string
     {
