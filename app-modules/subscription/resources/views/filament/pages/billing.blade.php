@@ -63,11 +63,11 @@
                         <div class="text-sm sm:text-lg font-bold text-white mt-0.5">
                             {{ $effectiveEndsAt ? $effectiveEndsAt->format('F d, Y') : 'Continuous' }}
                             @if($isPending)
-                                <span class="block sm:inline text-xs font-semibold text-amber-300 font-sans">(Pending)</span>
+                                <span class="block text-xs font-semibold text-amber-300 font-sans">(Pending)</span>
                             @elseif($isExpired)
-                                <span class="block sm:inline text-xs font-semibold text-rose-400 font-sans">(Expired)</span>
+                                <span class="block text-xs font-semibold text-rose-400 font-sans">(Expired)</span>
                             @elseif($daysRemaining !== null)
-                                <span class="block sm:inline text-xs font-normal text-indigo-300 font-sans">({{ $daysRemaining }} days remaining)</span>
+                                <span class="block text-xs font-normal text-indigo-300 font-sans">({{ $daysRemaining }} days remaining)</span>
                             @endif
                         </div>
                     </div>
