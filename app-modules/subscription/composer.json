@@ -1,0 +1,24 @@
+{
+	"name": "hotash/subscription",
+	"description": "Subscription Management Module",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"Hotash\\Subscription\\": "src/",
+			"Hotash\\Subscription\\Tests\\": "tests/",
+			"Hotash\\Subscription\\Database\\Factories\\": "database/factories/",
+			"Hotash\\Subscription\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Hotash\\Subscription\\Providers\\SubscriptionServiceProvider"
+			]
+		}
+	}
+}

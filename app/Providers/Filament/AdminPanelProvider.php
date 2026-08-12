@@ -79,7 +79,7 @@ class AdminPanelProvider extends PanelProvider
                     ->recoverable(),
                 EmailAuthentication::make(),
             ], isRequired: false)
-            ->strictAuthorization()
+            // ->strictAuthorization()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->unsavedChangesAlerts()
             ->spa(hasPrefetching: true);

@@ -3,10 +3,10 @@
 namespace Hotash\Socialite;
 
 use Filament\Contracts\Plugin;
+use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Contracts\View\View;
 
 class SocialitePlugin implements Plugin
 {
@@ -22,10 +22,9 @@ class SocialitePlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
-            fn (): View => view('socialite::socialite-login')
-        );
+        FilamentView::registerRenderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, function () {
+            return Filament::getCurrentPanel()?->hasPlugin($this->getId()) ? view('socialite::socialite-login') : '';
+        });
     }
 
     public function boot(Panel $panel): void

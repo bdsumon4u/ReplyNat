@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ee4d12b524164d8b72dd82a622499b9",
+    "content-hash": "e0595c0e2ee5f28545b37ccdebcb0a7f",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2808,6 +2808,39 @@
             "license": [
                 "proprietary"
             ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "hotash/subscription",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/subscription",
+                "reference": "340efd5048680351035b6f5ce1e83f9008c72c53"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Hotash\\Subscription\\Providers\\SubscriptionServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hotash\\Subscription\\": "src/",
+                    "Hotash\\Subscription\\Tests\\": "tests/",
+                    "Hotash\\Subscription\\Database\\Factories\\": "database/factories/",
+                    "Hotash\\Subscription\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Subscription Management Module",
             "transport-options": {
                 "symlink": true,
                 "relative": true

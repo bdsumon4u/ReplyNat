@@ -4,6 +4,7 @@ namespace Hotash\Socialite\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
@@ -39,6 +40,8 @@ class SocialLoginController extends Controller
                     'provider_id' => $socialUser->getId(),
                     'avatar_url' => $socialUser->getAvatar(),
                 ]);
+
+                event(new Registered($user));
             }
 
             Auth::login($user);
