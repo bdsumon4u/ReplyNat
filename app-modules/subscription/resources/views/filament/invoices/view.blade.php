@@ -51,7 +51,7 @@
                 <p class="text-gray-600 dark:text-gray-300"><strong class="text-gray-900 dark:text-white">Issue Date:</strong> {{ $invoice->created_at ? $invoice->created_at->format('M d, Y') : '-' }}</p>
                 <p class="text-gray-600 dark:text-gray-300"><strong class="text-gray-900 dark:text-white">Due Date:</strong> {{ $invoice->due_date ? $invoice->due_date->format('M d, Y') : '-' }}</p>
                 @if($invoice->paid_at)
-                    <p class="text-emerald-600 dark:text-emerald-400"><strong class="text-gray-900 dark:text-white">Paid On:</strong> {{ $invoice->paid_at->format('M d, Y h:i A') }}</p>
+                    <p class="text-emerald-600 dark:text-emerald-400"><strong class="text-gray-900 dark:text-white">Paid:</strong> {{ $invoice->paid_at->format('M d, Y h:i A') }}</p>
                 @endif
             </div>
         </div>
@@ -72,7 +72,7 @@
                                 {{ $plan['name'] ?? 'Subscription Plan' }}
                             </div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                Subscription renewal for period: {{ $subscription?->starts_at?->format('M d, Y') ?? 'Current' }} – {{ $subscription?->ends_at?->format('M d, Y') ?? 'Renewal' }}
+                                {{ $subscription?->starts_at?->format('M d, Y') ?? 'Current' }} – {{ $subscription?->ends_at?->format('M d, Y') ?? 'Renewal' }}
                             </div>
                         </td>
                         <td class="px-4 py-4 text-right font-semibold text-gray-900 dark:text-white">
