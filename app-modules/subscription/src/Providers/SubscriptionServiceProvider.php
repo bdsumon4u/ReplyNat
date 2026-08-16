@@ -4,6 +4,7 @@ namespace Hotash\Subscription\Providers;
 
 use Filament\Panel;
 use Hotash\Subscription\Console\Commands\ProcessSubscriptionInvoicesAndReminders;
+use Hotash\Subscription\Console\Commands\SyncExternalServices;
 use Hotash\Subscription\Filament\Admin\Resources\InvoiceResource;
 use Hotash\Subscription\Filament\Admin\Resources\UserResource;
 use Hotash\Subscription\SubscriptionPlugin;
@@ -36,6 +37,7 @@ class SubscriptionServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 ProcessSubscriptionInvoicesAndReminders::class,
+                SyncExternalServices::class,
             ]);
         }
     }

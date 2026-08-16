@@ -5,8 +5,11 @@ namespace Hotash\Subscription;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Hotash\Subscription\Filament\Pages\Billing;
+use Hotash\Subscription\Filament\Pages\Credentials;
 use Hotash\Subscription\Filament\Pages\ViewInvoice;
+use Hotash\Subscription\Filament\Widgets\ChatwootWidget;
 use Hotash\Subscription\Filament\Widgets\CurrentPlanWidget;
+use Hotash\Subscription\Filament\Widgets\N8nWidget;
 
 class SubscriptionPlugin implements Plugin
 {
@@ -25,10 +28,13 @@ class SubscriptionPlugin implements Plugin
         $panel
             ->pages([
                 Billing::class,
+                Credentials::class,
                 ViewInvoice::class,
             ])
             ->widgets([
                 CurrentPlanWidget::class,
+                ChatwootWidget::class,
+                N8nWidget::class,
             ]);
     }
 

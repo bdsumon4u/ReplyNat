@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Hotash Admin',
             'email' => 'admin@hotash.tech',
             'password' => bcrypt('password'),
+            'email_verified_at' => now(),
         ]);
 
         // User::factory(10)->create();

@@ -11,9 +11,13 @@ use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
+use Hotash\Chatwoot\Models\ChatwootAccount;
+use Hotash\N8n\Models\N8nWorkflow;
+use Hotash\N8n\Models\UserCredential;
 use Hotash\Subscription\Traits\HasSubscription;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -122,6 +126,21 @@ final class User extends Authenticatable implements FilamentUser, HasAppAuthenti
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    public function userCredential(): HasOne
+    {
+        return $this->hasOne(UserCredential::class);
+    }
+
+    public function n8nWorkflow(): HasOne
+    {
+        return $this->hasOne(N8nWorkflow::class);
+    }
+
+    public function chatwootAccount(): HasOne
+    {
+        return $this->hasOne(ChatwootAccount::class);
     }
 
     /**
