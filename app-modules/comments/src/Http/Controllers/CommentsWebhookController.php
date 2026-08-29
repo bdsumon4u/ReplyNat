@@ -48,37 +48,58 @@ class CommentsWebhookController extends Controller
         $object = $payload['object'] ?? null;
         $entries = $payload['entry'] ?? [];
 
-        Log::info('CommentsWebhookController: Incoming Meta webhook', [
+        Log::info('CommentsWebhookController: Full Incoming Meta Webhook', [
             'object' => $object,
             'entries_count' => count($entries),
+            'raw_payload' => $payload,
         ]);
 
         $hasMessagingEvents = false;
 
-        foreach ($entries as $entry) {
+        foreach ($entries as $entryIndex => $entry) {
             $assetId = (string) ($entry['id'] ?? '');
             $changes = $entry['changes'] ?? [];
             $messaging = $entry['messaging'] ?? $entry['standby'] ?? [];
+
+            Log::info("CommentsWebhookController: Entry #{$entryIndex} [Asset ID: {$assetId}]", [
+                'asset_id' => $assetId,
+                'has_messaging' => ! empty($messaging),
+                'messaging_count' => count($messaging),
+                'changes_count' => count($changes),
+            ]);
 
             // Check if this entry contains direct messages (Messenger / Instagram DMs)
             if (! empty($messaging)) {
                 $hasMessagingEvents = true;
             }
 
-            foreach ($changes as $change) {
+            foreach ($changes as $changeIndex => $change) {
                 $field = $change['field'] ?? '';
                 $value = $change['value'] ?? [];
+
+                Log::info("CommentsWebhookController: Entry #{$entryIndex} Change #{$changeIndex} [Field: {$field}]", [
+                    'object' => $object,
+                    'field' => $field,
+                    'value' => $value,
+                ]);
 
                 if (in_array($field, ['messages', 'messaging_postbacks', 'message_deliveries', 'message_reads'])) {
                     $hasMessagingEvents = true;
                 }
 
-                // 1. Facebook Post Comment
+                // 1. Facebook Post/Photo/Video Comment
                 if ($object === 'page' && $field === 'feed') {
                     $item = $value['item'] ?? '';
                     $verb = $value['verb'] ?? '';
+                    $commentId = $value['comment_id'] ?? null;
 
-                    if ($item === 'comment' && in_array($verb, ['add', 'created', ''])) {
+                    Log::info('CommentsWebhookController: Inspecting feed item', [
+                        'item' => $item,
+                        'verb' => $verb,
+                        'comment_id' => $commentId,
+                    ]);
+
+                    if (($item === 'comment' || ! empty($commentId)) && in_array($verb, ['add', 'created', ''])) {
                         $this->processFacebookComment($assetId, $value);
                     }
                 }
@@ -106,6 +127,8 @@ class CommentsWebhookController extends Controller
         try {
             $chatwootUrl = config('chatwoot.url');
             if (empty($chatwootUrl)) {
+                Log::warning('CommentsWebhookController: Chatwoot URL is empty, skipping DM relay.');
+
                 return;
             }
 
@@ -119,11 +142,13 @@ class CommentsWebhookController extends Controller
                 $headers['X-Hub-Signature'] = $sigSha1;
             }
 
+            Log::info("CommentsWebhookController: Relaying DM payload to Chatwoot: {$chatwootBotUrl}");
+
             Http::withHeaders($headers)
                 ->timeout(8)
                 ->post($chatwootBotUrl, $request->all());
 
-            Log::info('CommentsWebhookController: Relayed DM event to Chatwoot');
+            Log::info('CommentsWebhookController: Relayed DM event to Chatwoot successfully.');
         } catch (\Throwable $e) {
             Log::error('CommentsWebhookController: Failed to relay DM to Chatwoot', [
                 'error' => $e->getMessage(),
@@ -142,8 +167,23 @@ class CommentsWebhookController extends Controller
         $senderId = $data['from']['id'] ?? null;
         $senderName = $data['from']['name'] ?? 'User';
 
+        Log::info("CommentsWebhookController: processFacebookComment for Page #{$pageId}", [
+            'comment_id' => $commentId,
+            'sender_id' => $senderId,
+            'sender_name' => $senderName,
+            'post_id' => $postId,
+            'message' => $message,
+            'is_self_comment' => ($senderId === $pageId),
+        ]);
+
         // Ignore comments posted by the page itself to avoid echo loops
         if ($senderId === $pageId || empty($commentId) || empty($message)) {
+            Log::info('CommentsWebhookController: Skipped Facebook comment (self-comment or empty message)', [
+                'sender_id' => $senderId,
+                'page_id' => $pageId,
+                'comment_id' => $commentId,
+            ]);
+
             return;
         }
 
@@ -153,10 +193,12 @@ class CommentsWebhookController extends Controller
             ->first();
 
         if (! $asset) {
-            Log::info("CommentsWebhook: No active asset found for Facebook Page #{$pageId}");
+            Log::warning("CommentsWebhookController: No active ConnectedAsset found in DB for Facebook Page #{$pageId}");
 
             return;
         }
+
+        Log::info("CommentsWebhookController: Found active asset for Page #{$pageId} (User #{$asset->user_id}), dispatching to n8n");
 
         $this->forwardToN8n($asset, [
             'platform' => 'facebook',
@@ -185,8 +227,23 @@ class CommentsWebhookController extends Controller
         $senderId = $data['from']['id'] ?? null;
         $senderUsername = $data['from']['username'] ?? 'User';
 
+        Log::info("CommentsWebhookController: processInstagramComment for IG #{$igId}", [
+            'comment_id' => $commentId,
+            'sender_id' => $senderId,
+            'sender_username' => $senderUsername,
+            'media_id' => $mediaId,
+            'text' => $text,
+            'is_self_comment' => ($senderId === $igId),
+        ]);
+
         // Ignore comments posted by the IG account itself
         if ($senderId === $igId || empty($commentId) || empty($text)) {
+            Log::info('CommentsWebhookController: Skipped Instagram comment (self-comment or empty text)', [
+                'sender_id' => $senderId,
+                'ig_id' => $igId,
+                'comment_id' => $commentId,
+            ]);
+
             return;
         }
 
@@ -196,10 +253,12 @@ class CommentsWebhookController extends Controller
             ->first();
 
         if (! $asset) {
-            Log::info("CommentsWebhook: No active asset found for Instagram Account #{$igId}");
+            Log::warning("CommentsWebhookController: No active ConnectedAsset found in DB for Instagram Account #{$igId}");
 
             return;
         }
+
+        Log::info("CommentsWebhookController: Found active asset for IG #{$igId} (User #{$asset->user_id}), dispatching to n8n");
 
         $this->forwardToN8n($asset, [
             'platform' => 'instagram',

@@ -10,9 +10,9 @@ return [
     | webhook subscription verification, and publishing automated comment replies.
     |
     */
-    'app_id' => env('META_APP_ID', env('FACEBOOK_CLIENT_ID')),
+    'app_id' => env('META_APP_ID'),
 
-    'app_secret' => env('META_APP_SECRET', env('FACEBOOK_CLIENT_SECRET')),
+    'app_secret' => env('META_APP_SECRET'),
 
     'graph_version' => env('META_GRAPH_VERSION', 'v20.0'),
 
