@@ -12,11 +12,13 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Hotash\Chatwoot\Models\ChatwootAccount;
+use Hotash\Evolution\Models\WhatsappInstance;
 use Hotash\N8n\Models\N8nWorkflow;
 use Hotash\N8n\Models\UserCredential;
 use Hotash\Subscription\Traits\HasSubscription;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -141,6 +143,11 @@ final class User extends Authenticatable implements FilamentUser, HasAppAuthenti
     public function chatwootAccount(): HasOne
     {
         return $this->hasOne(ChatwootAccount::class);
+    }
+
+    public function whatsappInstances(): HasMany
+    {
+        return $this->hasMany(WhatsappInstance::class);
     }
 
     /**

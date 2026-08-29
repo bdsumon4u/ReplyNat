@@ -64,22 +64,6 @@ class Credentials extends Page implements HasForms
                             ->required()
                             ->placeholder('Enter your OpenAI API Key (sk-...)'),
                     ]),
-
-                Section::make('Social Media Comments (Optional)')
-                    ->description('Required for comment replies.')
-                    ->schema([
-                        TextInput::make('facebook_page_id')
-                            ->label('Facebook Page ID')
-                            ->placeholder('Enter Facebook Page ID'),
-                        TextInput::make('facebook_page_access_token')
-                            ->label('Facebook Page Access Token')
-                            ->password()
-                            ->revealable()
-                            ->placeholder('Enter Facebook Page Access Token'),
-                        TextInput::make('instagram_business_account_id')
-                            ->label('Instagram Business Account ID')
-                            ->placeholder('Enter Instagram Business Account ID'),
-                    ])->columns(2),
             ])
             ->statePath('data');
     }

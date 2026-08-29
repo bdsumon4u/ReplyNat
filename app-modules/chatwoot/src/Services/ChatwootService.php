@@ -29,8 +29,8 @@ class ChatwootService
         }
 
         return Http::baseUrl($this->baseUrl)
-            ->timeout(15)
-            ->connectTimeout(5)
+            ->timeout(8)
+            ->connectTimeout(3)
             ->withHeaders([
                 'api_access_token' => $this->apiKey,
                 'Content-Type' => 'application/json',
@@ -155,7 +155,6 @@ class ChatwootService
     {
         try {
             $response = $this->client()
-                ->retry([100, 500, 1000])
                 ->get("/platform/api/v1/users/{$chatwootUserId}/login")
                 ->throw();
 
@@ -168,6 +167,177 @@ class ChatwootService
 
             return null;
         }
+    }
+
+    /**
+     * Get access token for a platform user.
+     *
+     * @throws RequestException
+     */
+    public function getUserAccessToken(int $chatwootUserId): ?string
+    {
+        try {
+            $response = $this->client()
+                ->get("/platform/api/v1/users/{$chatwootUserId}")
+                ->throw();
+
+            return $response->json('access_token');
+        } catch (\Throwable $e) {
+            Log::error('Failed to get Chatwoot user access token', [
+                'chatwoot_user_id' => $chatwootUserId,
+                'error' => $this->getErrorMessage($e),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * List inboxes for an account using user access token.
+     *
+     * @throws RequestException
+     */
+    public function listInboxes(int $accountId, string $userAccessToken): ?array
+    {
+        try {
+            $response = Http::baseUrl($this->baseUrl)
+                ->timeout(8)
+                ->connectTimeout(3)
+                ->withHeaders([
+                    'api_access_token' => $userAccessToken,
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ])
+                ->get("/api/v1/accounts/{$accountId}/inboxes")
+                ->throw();
+
+            return $response->json('payload') ?? $response->json();
+        } catch (\Throwable $e) {
+            Log::error('Failed to list Chatwoot inboxes', [
+                'account_id' => $accountId,
+                'error' => $this->getErrorMessage($e),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Assign an Agent Bot to an Inbox.
+     *
+     * @throws RequestException
+     */
+    /**
+     * Assign an Agent Bot to an Inbox.
+     *
+     * @throws RequestException
+     */
+    public function setAgentBotToInbox(int $accountId, int $inboxId, int|string $agentBotId, string $userAccessToken): bool
+    {
+        try {
+            Http::baseUrl($this->baseUrl)
+                ->timeout(15)
+                ->connectTimeout(5)
+                ->withHeaders([
+                    'api_access_token' => $userAccessToken,
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ])
+                ->retry([100, 500, 1000])
+                ->post("/api/v1/accounts/{$accountId}/inboxes/{$inboxId}/set_agent_bot", [
+                    'agent_bot' => $agentBotId,
+                ])
+                ->throw();
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::error('Failed to set Agent Bot to Chatwoot inbox', [
+                'account_id' => $accountId,
+                'inbox_id' => $inboxId,
+                'agent_bot' => $agentBotId,
+                'error' => $this->getErrorMessage($e),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Add users/agents as members/collaborators to an inbox.
+     *
+     * @throws RequestException
+     */
+    public function addInboxMembers(int $accountId, int $inboxId, array $userIds, string $userAccessToken): bool
+    {
+        try {
+            Http::baseUrl($this->baseUrl)
+                ->timeout(15)
+                ->connectTimeout(5)
+                ->withHeaders([
+                    'api_access_token' => $userAccessToken,
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ])
+                ->retry([100, 500, 1000])
+                ->post("/api/v1/accounts/{$accountId}/inbox_members", [
+                    'inbox_id' => $inboxId,
+                    'user_ids' => array_values(array_map('intval', $userIds)),
+                ])
+                ->throw();
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::error('Failed to add members to Chatwoot inbox', [
+                'account_id' => $accountId,
+                'inbox_id' => $inboxId,
+                'user_ids' => $userIds,
+                'error' => $this->getErrorMessage($e),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Find an inbox by name or webhook URL.
+     */
+    public function findInboxByName(int $accountId, string $inboxName, string $userAccessToken): ?array
+    {
+        $inboxes = $this->listInboxes($accountId, $userAccessToken);
+        if (! is_array($inboxes)) {
+            return null;
+        }
+
+        foreach ($inboxes as $inbox) {
+            if (($inbox['name'] ?? '') === $inboxName) {
+                return $inbox;
+            }
+        }
+
+        foreach ($inboxes as $inbox) {
+            if (($inbox['channel_type'] ?? '') === 'Channel::Api') {
+                return $inbox;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find an inbox by name or webhook and assign Agent Bot to it.
+     */
+    public function assignAgentBotToInboxName(int $accountId, string $inboxName, int|string $agentBotId, string $userAccessToken): ?int
+    {
+        $matchedInbox = $this->findInboxByName($accountId, $inboxName, $userAccessToken);
+
+        if ($matchedInbox && isset($matchedInbox['id'])) {
+            $inboxId = (int) $matchedInbox['id'];
+            $this->setAgentBotToInbox($accountId, $inboxId, $agentBotId, $userAccessToken);
+
+            return $inboxId;
+        }
+
+        return null;
     }
 
     /**
