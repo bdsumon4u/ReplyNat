@@ -18,7 +18,7 @@ class ManageConnectedAssets extends ManageRecords
                 ->label('Connect Facebook & Instagram')
                 ->icon(Heroicon::OutlinedPlusCircle)
                 ->color('primary')
-                ->url(route('comments.auth.redirect')),
+                ->action(fn () => redirect()->route('comments.auth.redirect')),
         ];
     }
 }
