@@ -178,10 +178,10 @@ test('webhook handles facebook comment event and forwards to n8n webhook', funct
         'is_active' => true,
     ]);
 
-    config()->set('n8n.webhook_url', 'https://n8n.example.com/webhook/comment');
+    config()->set('n8n.url', 'https://n8n.example.com');
 
     Http::fake([
-        'https://n8n.example.com/webhook/comment' => Http::response(['success' => true], 200),
+        "https://n8n.example.com/webhook/comment-trigger-{$user->id}" => Http::response(['success' => true], 200),
     ]);
 
     $payload = [
@@ -215,8 +215,8 @@ test('webhook handles facebook comment event and forwards to n8n webhook', funct
     $response->assertStatus(200)
         ->assertJson(['status' => 'EVENT_RECEIVED']);
 
-    Http::assertSent(function ($request) {
-        return $request->url() === 'https://n8n.example.com/webhook/comment'
+    Http::assertSent(function ($request) use ($user) {
+        return $request->url() === "https://n8n.example.com/webhook/comment-trigger-{$user->id}"
             && $request['comment_id'] === 'comment_999'
             && $request['platform'] === 'facebook'
             && $request['comment_text'] === 'How much does this product cost?';
@@ -235,10 +235,10 @@ test('webhook handles instagram comment event and forwards to n8n webhook', func
         'is_active' => true,
     ]);
 
-    config()->set('n8n.webhook_url', 'https://n8n.example.com/webhook/comment');
+    config()->set('n8n.url', 'https://n8n.example.com');
 
     Http::fake([
-        'https://n8n.example.com/webhook/comment' => Http::response(['success' => true], 200),
+        "https://n8n.example.com/webhook/comment-trigger-{$user->id}" => Http::response(['success' => true], 200),
     ]);
 
     $payload = [
@@ -272,8 +272,8 @@ test('webhook handles instagram comment event and forwards to n8n webhook', func
     $response->assertStatus(200)
         ->assertJson(['status' => 'EVENT_RECEIVED']);
 
-    Http::assertSent(function ($request) {
-        return $request->url() === 'https://n8n.example.com/webhook/comment'
+    Http::assertSent(function ($request) use ($user) {
+        return $request->url() === "https://n8n.example.com/webhook/comment-trigger-{$user->id}"
             && $request['comment_id'] === 'ig_comment_123'
             && $request['platform'] === 'instagram'
             && $request['comment_text'] === 'Where can I buy this dress?';

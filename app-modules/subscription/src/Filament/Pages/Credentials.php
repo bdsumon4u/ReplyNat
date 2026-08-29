@@ -44,13 +44,13 @@ class Credentials extends Page implements HasForms
         return $schema
             ->schema([
                 Section::make('Chatwoot Integration')
-                    ->description('Automatically generated via XaNNaT Bot, or customize manually.')
+                    ->description('Automatically generated via FariHa Bot, or customize manually.')
                     ->schema([
                         TextInput::make('chatwoot_access_token')
                             ->label('Chatwoot Access Token')
                             ->password()
                             ->revealable()
-                            ->helperText('Automatically provisioned by XaNNaT Agent Bot. You can customize this if you want to use a different token.')
+                            ->helperText('Automatically provisioned by FariHa Agent Bot. You can customize this if you want to use a different token.')
                             ->placeholder('Automatically generated'),
                     ]),
 

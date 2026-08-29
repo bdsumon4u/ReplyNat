@@ -68,8 +68,8 @@ class SyncChatwootAccountJob implements ShouldBeUnique, ShouldQueue
                 $chatwoot->associateUserToAccount($chatwootAccountId, $chatwootUserId);
 
                 // 4. Create Agent Bot
-                $outgoingUrl = rtrim(config('n8n.url', 'http://localhost:5678'), '/').'/webhook/webhook-trigger-'.$user->id;
-                $botData = $chatwoot->createAgentBot('XaNNaT', $chatwootAccountId, $outgoingUrl);
+                $outgoingUrl = rtrim(config('n8n.url', 'http://localhost:5678'), '/').'/webhook/message-trigger-'.$user->id;
+                $botData = $chatwoot->createAgentBot('Fari Ha', $chatwootAccountId, $outgoingUrl);
                 $chatwootBotId = $botData['id'] ?? null;
                 $chatwootBotToken = $botData['access_token'] ?? null;
 

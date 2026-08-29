@@ -4,7 +4,6 @@ namespace Hotash\Comments\Http\Controllers;
 
 use Hotash\Comments\Models\ConnectedAsset;
 use Hotash\Comments\Services\MetaGraphService;
-use Hotash\N8n\Models\N8nWorkflow;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -229,18 +228,11 @@ class CommentsWebhookController extends Controller
                 return;
             }
 
-            // Find user's active n8n workflow
-            $workflow = N8nWorkflow::where('user_id', $user->id)->first();
-            $webhookUrl = config('n8n.webhook_url') ?: null;
+            $n8nUrl = rtrim(config('n8n.url', 'http://localhost:5678'), '/');
+            $webhookUrl = "{$n8nUrl}/webhook/comment-trigger-{$user->id}";
 
-            if ($workflow && ! empty($workflow->settings['comment_webhook_url'])) {
-                $webhookUrl = $workflow->settings['comment_webhook_url'];
-            }
-
-            if ($webhookUrl) {
-                Http::timeout(5)
-                    ->post($webhookUrl, $payload);
-            }
+            Http::timeout(5)
+                ->post($webhookUrl, $payload);
         } catch (\Throwable $e) {
             Log::error('CommentsWebhook: Failed to forward comment to n8n', [
                 'asset_id' => $asset->asset_id,

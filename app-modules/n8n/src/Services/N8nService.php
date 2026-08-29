@@ -173,10 +173,10 @@ class N8nService
             '{{CHATWOOT_ACCOUNT_ID}}' => $chatwootAccount->chatwoot_account_id,
             '{{CHATWOOT_ACCESS_TOKEN}}' => $credentials->chatwoot_access_token ?? '',
             '{{OPENAI_API_KEY}}' => $credentials->openai_api_key ?? '',
-            '{{FACEBOOK_PAGE_ID}}' => $credentials->facebook_page_id ?? '',
-            '{{FACEBOOK_PAGE_ACCESS_TOKEN}}' => $credentials->facebook_page_access_token ?? '',
-            '{{INSTAGRAM_BUSINESS_ACCOUNT_ID}}' => $credentials->instagram_business_account_id ?? '',
-            '{{WEBHOOK_TRIGGER_PATH}}' => 'webhook-trigger-'.$user->id,
+            '{{USER_ID}}' => (string) $user->id,
+            '{{MESSAGE_WEBHOOK_TRIGGER_PATH}}' => 'message-trigger-'.$user->id,
+            '{{COMMENT_WEBHOOK_TRIGGER_PATH}}' => 'comment-trigger-'.$user->id,
+            '{{WEBHOOK_TRIGGER_PATH}}' => 'message-trigger-'.$user->id,
         ];
 
         $substitutedJson = str_replace(
