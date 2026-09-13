@@ -44,8 +44,7 @@ test('meta graph service generates oauth url correctly', function () {
     expect($url)
         ->toContain('123456789')
         ->toContain('test_state_123')
-        ->toContain('pages_manage_posts')
-        ->toContain('instagram_manage_comments');
+        ->toContain('pages_messaging');
 });
 
 test('meta graph service exchanges code for long lived token', function () {

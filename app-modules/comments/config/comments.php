@@ -25,15 +25,15 @@ return [
     */
     'scopes' => [
         'pages_show_list',
-        'pages_read_engagement',
-        'pages_manage_posts',
-        'pages_read_user_content',
         'pages_messaging',
         'pages_manage_metadata',
-        'instagram_basic',
-        'instagram_manage_comments',
-        'instagram_manage_messages',
-        'business_management',
+        // 'pages_read_engagement',
+        // 'pages_manage_posts',
+        // 'pages_read_user_content',
+        // 'instagram_basic',
+        // 'instagram_manage_comments',
+        // 'instagram_manage_messages',
+        // 'business_management',
     ],
 
     /*
