@@ -1,0 +1,24 @@
+{
+	"name": "hotash/inbox",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"Hotash\\Inbox\\": "src/",
+			"Hotash\\Inbox\\Tests\\": "tests/",
+			"Hotash\\Inbox\\Database\\Factories\\": "database/factories/",
+			"Hotash\\Inbox\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Hotash\\Inbox\\Providers\\InboxServiceProvider"
+			]
+		}
+	}
+}

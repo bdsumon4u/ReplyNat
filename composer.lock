@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7114967f18ba18d349f0acf37683c85d",
+    "content-hash": "634405ca2ec50a62d0df807e26aa09a0",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2774,6 +2774,38 @@
                 "proprietary"
             ],
             "description": "Comment Automation Module (Facebook & Instagram) for ReplyNat",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "hotash/inbox",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/inbox",
+                "reference": "60279c461a31755a647740eb9bcfa8554d8fe44c"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Hotash\\Inbox\\Providers\\InboxServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hotash\\Inbox\\": "src/",
+                    "Hotash\\Inbox\\Tests\\": "tests/",
+                    "Hotash\\Inbox\\Database\\Factories\\": "database/factories/",
+                    "Hotash\\Inbox\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
             "transport-options": {
                 "symlink": true,
                 "relative": true
